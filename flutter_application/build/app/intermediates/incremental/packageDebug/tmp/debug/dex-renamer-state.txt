@@ -1,0 +1,4 @@
+#Thu Mar 23 23:07:51 KST 2023
+base.0=/Users/sonhaechang/workspace/quiz_app/flutter_application/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
