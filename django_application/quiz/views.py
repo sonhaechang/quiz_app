@@ -14,7 +14,7 @@ class RandomQuizAPIView(APIView):
     def get_object(self):
         return Quiz.objects.all()
     
-    def get(self, request):
-        randomQuizs = random.sample(list(self.get_object()), self.kwargs['pk'])
+    def get(self, request, *args, **kwargs):
+        randomQuizs = random.sample(list(self.get_object()), kwargs['pk'])
         serializer = self.serializer_class(randomQuizs, many=True)
         return Response(serializer.data)
