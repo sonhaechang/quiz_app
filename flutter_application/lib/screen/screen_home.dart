@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/model/api_adapter.dart';
 import 'package:flutter_application/model/model_quiz.dart';
 import 'package:flutter_application/screen/screen_quiz.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 class HomeScreen extends StatefulWidget {
@@ -10,23 +13,24 @@ class HomeScreen extends StatefulWidget {
 
 
 class _HomeScreenState extends State<HomeScreen> {
-	List<Quiz> quizs = [
-		Quiz.fromMap({
-			'title': 'test',
-			'candidates': ['a', 'b', 'c', 'd'],
-			'answer': 0
-		}),
-		Quiz.fromMap({
-			'title': 'test',
-			'candidates': ['a', 'b', 'c', 'd'],
-			'answer': 0
-		}),
-		Quiz.fromMap({
-			'title': 'test',
-			'candidates': ['a', 'b', 'c', 'd'],
-			'answer': 0
-		}),
-	];
+  List<Quiz> quizs = [];
+  bool isLoading = false;
+
+  _fetchQuizs() async {
+    setState(() {
+      isLoading = true;
+    });
+    
+    final response = await http.get(Uri.parse('https://3ffe-1-235-97-8.jp.ngrok.io/quiz/3/'));
+    if (response.statusCode == 200) {
+      setState(() {
+        quizs = parseQuizs(utf8.decode(response.bodyBytes));
+        isLoading = false;
+      });
+    } else {
+      throw Exception('faild to load data');
+    }
+  }
 
 	@override
 	Widget build(BuildContext cnetext) {
@@ -96,14 +100,16 @@ class _HomeScreenState extends State<HomeScreen> {
 													backgroundColor: Colors.deepPurple,
 												),										
 												onPressed: () {
-													Navigator.push(
-														context, 
-														MaterialPageRoute(
-															builder: (context) => QuizScreen(
-																quizs,
-															),
-														),
-													);
+                          _fetchQuizs().whenComplete(() {
+                            return Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QuizScreen(
+                                  quizs,
+                                ),
+                              ),
+                            );
+                          });
 												},
 											),
 										),
